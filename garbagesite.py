@@ -33,8 +33,12 @@ def save_post_metadata(dst, post_data):
     out_dir = os.path.join(dst, str(post_id)[:2], str(post_id))
     os.makedirs(out_dir, exist_ok=True)
 
+    out_path = os.path.join(out_dir, "info.json")
+    if os.path.exists(out_path):
+        return
+
     json_string = json.dumps(post_data, separators=(",", ":"))
-    with open(os.path.join(out_dir, "info.json"), "w") as outfile:
+    with open(out_path, "w") as outfile:
         outfile.write(json_string)
 
 
