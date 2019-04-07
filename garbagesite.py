@@ -3,6 +3,7 @@
 import json
 import os
 import subprocess
+from datetime import datetime, timezone
 from urllib.error import HTTPError
 from urllib.parse import parse_qs, urlparse
 from urllib.request import urlretrieve
@@ -11,6 +12,7 @@ from bs4 import BeautifulSoup
 import requests
 import tqdm
 
+cutoff_date = datetime(2019, 3, 1, tzinfo=timezone.utc)
 
 class TumblrSession:
 
@@ -101,6 +103,12 @@ def get_all_posts(*, blog_identifier, api_key):
             # instead look at the timestamps of the posts we retrieved and
             # set that as the "before" parameter.
             earliest_timestamp = min(p["timestamp"] for p in posts)
+            d = datetime.fromtimestamp(earliest_timestamp, timezone.utc)
+            print(f"Next before: {d}")
+            if d < cutoff_date:
+                print(f"Stop: {d}")
+                break
+
             params["before"] = earliest_timestamp - 1
 
     return tqdm.tqdm(iterator(), total=total_posts)
@@ -115,7 +123,13 @@ def find_all_metadata_files(path):
 
     for root, _, filenames in os.walk(path):
         if "info.json" in filenames:
-            yield os.path.join(root, "info.json")
+            file_path = os.path.join(root, "info.json")
+            created = datetime.fromtimestamp(os.path.getctime(file_path), timezone.utc)
+            if created < cutoff_date:
+                continue
+
+            print(f"Created: {created}")
+            yield file_path
 
 
 def _download_asset(post_dir, url, suffix=""):
