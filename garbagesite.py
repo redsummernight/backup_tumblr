@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import requests
 import tqdm
 
-cutoff_date = datetime(2019, 3, 1, tzinfo=timezone.utc)
+cutoff_date = datetime(2019, 4, 1, tzinfo=timezone.utc)
 
 class TumblrSession:
 
