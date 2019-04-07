@@ -13,6 +13,7 @@ from garbagesite import get_all_posts, save_post_metadata
 )
 @click.option(
     "--blog_identifier", required=True,
+    default="redsummernight.tumblr.com",
     prompt="What is your blog identifier? e.g. 'alexwlchan.tumblr.com'",
     help="Blog identifier, as used by the Tumblr API"
 )
